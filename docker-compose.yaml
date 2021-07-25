@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  database:
+    image: mongo:4.4
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=example
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+      - MONGO_INITDB_USERNAME=kajame
+      - MONGO_INITDB_PASSWORD=123456
+    volumes:
+      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
+      - ./db:/data/db
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 2000:2000
+    environment:
+      - MONGO_DB_CONNECTION=mongodb://kajame:123456@database:27017/example
+      - PORT=2000
+    
